@@ -1,5 +1,5 @@
 {
-  "name": "lne-stock-backen",
+  "name": "lne-stock-backend",
   "version": "1.0.0",
   "description": "API REST para la gestión de inventario de LNE Stock",
   "main": "src/server.js",
