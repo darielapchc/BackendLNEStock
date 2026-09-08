@@ -1,7 +1,7 @@
 {
-  "name": "fixit-backend",
+  "name": "lne-stock-backen",
   "version": "1.0.0",
-  "description": "API REST de FixIt - Plataforma de Home Services (proyecto ancla del bootcamp)",
+  "description": "API REST para la gestión de inventario de LNE Stock",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
