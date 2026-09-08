@@ -9,7 +9,6 @@ const sequelize = require('./config/database');
 require('./models/user.model');
 require('./models/refreshToken.model');
 require('./models/categoria.model');
-require('./models/proveedor.model');
 */
 
 const PORT = process.env.PORT || 4000;
