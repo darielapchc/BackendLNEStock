@@ -36,7 +36,7 @@ class CategoriaRepository {
   }
 
   // Soft delete: nunca se borra el registro, porque los servicios de
-  // proveedores/solicitudes pueden referenciar la categoría por id.
+  // |es/solicitudes pueden referenciar la categoría por id.
   async softDelete(categoria) {
     return categoria.update({ activo: false });
   }

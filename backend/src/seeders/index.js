@@ -140,8 +140,8 @@ async function seed() {
       await reset();
     }
 
-    await seedCategorias();
     console.log('\n--- 1) Categorías ---');
+    await seedCategorias();
 
     const passwordHash = await hashPassword(PASSWORD_PRUEBA);
 
