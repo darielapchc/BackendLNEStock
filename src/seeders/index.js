@@ -71,15 +71,15 @@ async function reset() {
   );
 
   await RefreshToken.destroy({
-    where: {}, truncate: true, cascade: true 
+    where: {} //truncate: true, cascade: true 
   });
   
   await User.destroy({
-   where: {}, truncate: true, cascade: true
+   where: {} //truncate: true, cascade: true
   });
 
   await Categoria.destroy({
-    where: {}, truncate: true, cascade: true
+    where: {} //truncate: true, cascade: true
   });
 
   console.log('🧹 Tablas vaciadas.\n');
