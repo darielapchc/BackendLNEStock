@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-FixIt Backend — REST API for a home services platform ("proyecto ancla" of a bootcamp). This repo is at an early stage (Session 1: setup + manual JWT auth module); expect the codebase to grow module by module (users, services, requests, etc.) in subsequent sessions. Comments in the code are written for students learning the stack and often explain *why*, not just *what* — preserve that style when editing existing files.
+LNE Stock Backend — REST API para la gestión de inventario. Los comentarios del código están orientados al aprendizaje y con frecuencia explican el porqué de las decisiones; conserva ese estilo al editar archivos existentes.
 
 Code comments and documentation in this repo are written in Spanish; follow that convention when editing existing files.
 
@@ -19,7 +19,7 @@ npm start           # start without nodemon
 There is no `.env.example` committed, but `src/config/database.js` and `src/server.js`/`src/utils/jwt.js` read these env vars (see `.env` locally, never commit it):
 `NODE_ENV`, `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `CLIENT_URL`.
 
-A local MySQL database must exist before starting (`mysql -u root -p -e "CREATE DATABASE fixit_dev;"`). Generate JWT secrets with:
+Una base de datos MySQL local, con el nombre configurado en `DB_NAME`, debe existir antes de iniciar. Genera los secretos JWT con:
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
@@ -51,7 +51,7 @@ Route → Middleware (validation/auth) → Controller → Service → Repository
 Skipping a layer (e.g. calling Sequelize directly from a Controller) is considered an architecture violation.
 
 - **`src/app.js`** — Express app configuration only (middleware, routes, error handler). Does *not* start the server — this separation exists so integration tests can `require('./app')` without binding a real port.
-- **`src/server.js`** — entry point: loads env, connects to MySQL (`sequelize.authenticate()`), registers models (imported here so Sequelize associations like `User.hasMany(RefreshToken)` are set up before sync), runs `sequelize.sync({ alter: true })` **only when `NODE_ENV === 'development'`** (never in production — migrations via `sequelize-cli` are the intended production path, not yet implemented), then `app.listen`.
+- **`src/server.js`** — entry point: loads env, connects to MySQL (`sequelize.authenticate()`), registers all models so Sequelize knows their associations, then starts `app.listen`. La sincronización automática permanece desactivada; el seeder maestro prepara el esquema de desarrollo mediante `sequelize.sync()`.
 - **`src/config/database.js`** — Sequelize instance, configured entirely from env vars.
 - **`src/models/`** — Sequelize model definitions (the shape of the data). Associations between models are declared in the model file (see `refreshToken.model.js`).
 - **`src/repositories/`** — the *only* layer allowed to import/query Sequelize models directly. Services must go through a repository, never touch a model. This is the seam intended for swapping ORMs later without touching business logic. Repositories are exported as singleton instances (`module.exports = new XRepository()`).
@@ -68,5 +68,5 @@ Skipping a layer (e.g. calling Sequelize directly from a Controller) is consider
 - Refresh token: 7 day expiry, persisted in the `refresh_tokens` table (via `RefreshToken` model/repository) so it can be revoked; delivered as an `httpOnly` + `secure` (prod only) + `sameSite=strict` cookie scoped to `path: '/api/auth'`, never in `localStorage`.
 - Refresh rotation: every `/api/auth/refresh` call revokes the presented refresh token and issues a new one (limits damage from a stolen token to one use).
 - Login returns a generic "credenciales inválidas" error for both "user not found" and "wrong password" to avoid user-enumeration.
-- `role` accepted at registration is restricted to `client`/`provider` via `express-validator`'s `isIn` — `admin` is never self-assignable through the public API.
+- El rol aceptado durante el registro está restringido a `client`; `admin` nunca se autoasigna mediante la API pública.
 - `AuthService.logoutAllDevices(userId)` exists (revokes every refresh token for a user) but is not yet wired to a route — see README's student exercise for the intended `POST /api/auth/logout-all` endpoint.

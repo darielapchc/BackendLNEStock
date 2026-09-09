@@ -11,7 +11,7 @@ const router = Router();
 // El catálogo de categorías lo consume la app (Flutter) sin necesidad
 // de login -- por eso GET / y GET /:id quedan abiertas. Crear, editar o
 // desactivar categorías sí requiere ser admin, porque afecta el
-// catálogo que ven TODOS los usuarios (clientes y proveedores).
+// catálogo de inventario que consultan los usuarios autenticados.
 // -----------------------------------------------------------------------
 //Este es un cambio cualquier solo para disparar el flujo de trabajo de GitHub Actions. No tiene relevancia para el proyecto.
 router.get('/', authenticate,categoriaController.listarCategorias);

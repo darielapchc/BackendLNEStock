@@ -5,11 +5,11 @@ const sequelize = require('./config/database');
 // Importamos los modelos aquí para que Sequelize registre las
 // asociaciones (User.hasMany(RefreshToken), etc.) antes del sync/arranque.
 
-/* Mientras defino bien los modelos
 require('./models/user.model');
 require('./models/refreshToken.model');
 require('./models/categoria.model');
-*/
+require('./models/producto.model');
+require('./models/movimientoInventario.model');
 
 const PORT = process.env.PORT || 4000;
 
@@ -27,10 +27,13 @@ async function startServer() {
     // En producción se usan migraciones explícitas (sequelize-cli).
     // Lo veremos formalmente en la Semana 3.
 
-    /* Esto lo comento momentaneamente hasta tener claridad de como arreglarlo y defina la rutas de los modelos.
+    /*
+    La sincronización automática se mantiene desactivada, tal como estaba
+    en el proyecto. Para preparar la base de datos de desarrollo se usa
+    `npm run seed`, que registra todos los modelos y ejecuta sync() sin alter.
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync({ alter: true });
-      console.log('🔄 Modelos sincronizados con la base de datos.');
+      console.log('Modelos sincronizados con la base de datos.');
     }
     */
 

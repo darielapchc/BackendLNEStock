@@ -1,9 +1,9 @@
-# FixIt Backend — Sesión 1: Setup + Módulo de Autenticación (JWT manual)
+# LNE Stock Backend — Inventario y Autenticación JWT
 
 ## 1. Estructura de carpetas (y por qué es así)
 
 ```
-fixit-backend/
+lne-stock-backend/
 ├── src/
 │   ├── config/          # Configuración de infraestructura (BD, futuro: Redis, Cloudinary)
 │   ├── models/           # Definición de tablas (Sequelize) — la "forma" de los datos
@@ -32,7 +32,7 @@ Y la respuesta regresa por el mismo camino, en reversa. Si en algún punto sient
 
 ```bash
 # 1. Clonar / crear el proyecto y entrar a la carpeta
-cd fixit-backend
+cd lne-stock-backend
 
 # 2. Instalar dependencias
 npm install
@@ -42,7 +42,7 @@ cp .env.example .env
 
 # 4. Editar .env con tus credenciales locales de MySQL
 #    (asegúrate de haber creado la base de datos antes: )
-#    mysql -u root -p -e "CREATE DATABASE fixit_dev;"
+#    Crea la base de datos configurada en DB_NAME dentro de tu archivo .env.
 
 # 5. Generar secretos JWT reales (ejecuta esto dos veces, uno para cada variable)
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
@@ -55,7 +55,7 @@ Si todo salió bien, deberías ver en consola:
 ```
 ✅ Conexión a MySQL establecida correctamente.
 🔄 Modelos sincronizados con la base de datos.
-🚀 Servidor FixIt corriendo en http://localhost:4000
+🚀 Servidor LNE Stock corriendo en http://localhost:4000
 ```
 
 ## 3. Probar el flujo completo (con curl o Postman)
@@ -124,5 +124,46 @@ Sobre este mismo módulo, implementar:
 ## 7. Preguntas de reflexión
 
 - Si moviéramos la validación de `express-validator` desde las rutas hacia dentro del Service, ¿qué ventaja y qué desventaja tendría?
-- El Repository de usuarios no tiene ningún método `delete`. ¿Es un descuido, o podría ser una decisión de diseño intencional en una plataforma como FixIt? ¿Qué harías en su lugar si un usuario pide "borrar mi cuenta"?
+- El Repository de usuarios no tiene ningún método `delete`. ¿Es un descuido, o podría ser una decisión de diseño intencional en una aplicación de inventario? ¿Qué harías en su lugar si un usuario pide "borrar mi cuenta"?
 - ¿Por qué el `refreshToken` se revoca (rotación) en cada uso, pero el `accessToken` no se revoca nunca — simplemente expira?
+
+## 8. Inventario LNE Stock
+
+Primero registra o inicia sesión con el usuario administrador sembrado (`admin@lnestock.hn`, contraseña `LNEStock123`) y envía su `accessToken` en el encabezado `Authorization: Bearer <token>`.
+
+Ejecuta `npm run seed` para crear las seis categorías y los usuarios de prueba. El seeder es idempotente; `npm run seed:reset` borra los datos de desarrollo de movimientos, productos, usuarios, refresh tokens y categorías antes de sembrarlos otra vez.
+
+| Método | Endpoint | Acceso |
+| --- | --- | --- |
+| GET | `/api/categorias` y `/api/categorias/:id` | Autenticado |
+| POST, PUT, DELETE | `/api/categorias` | Administrador |
+| GET | `/api/productos` y `/api/productos/:id` | Autenticado |
+| POST, PUT, DELETE | `/api/productos` | Administrador |
+| GET | `/api/movimientos` | Autenticado |
+| POST | `/api/movimientos` | Administrador |
+
+Ejemplo de producto:
+
+```json
+{
+  "nombre": "Cuaderno rayado",
+  "descripcion": "Cuaderno de 100 hojas",
+  "codigo": "CUAD-100-R",
+  "precio": 85.50,
+  "stock": 0,
+  "imagen": "https://ejemplo.com/cuaderno.jpg",
+  "categoriaId": 1
+}
+```
+
+El stock posterior al alta debe modificarse mediante `POST /api/movimientos`; por ejemplo:
+
+```json
+{
+  "tipoMovimiento": "ENTRADA",
+  "cantidad": 10,
+  "productoId": 1
+}
+```
+
+Una `SALIDA` solo se registra si la cantidad solicitada no supera el stock disponible. El movimiento y la actualización de stock se confirman juntos mediante una transacción.
