@@ -27,7 +27,7 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('client', 'provider', 'admin'),
+      type: DataTypes.ENUM('client', 'admin'),
       allowNull: false,
       defaultValue: 'client',
     },

@@ -2,11 +2,12 @@ const { Op } = require('sequelize');
 const Categoria = require('../models/categoria.model');
 
 // -----------------------------------------------------------------------
-// CONTEXTO PARA EL ESTUDIANTE:
+// CONTEXTO:
 // Única capa que sabe hablar con Sequelize para Categoria (mismo patrón
 // que user.repository.js / refreshToken.repository.js).
 // -----------------------------------------------------------------------
 class CategoriaRepository {
+  
   async findAll({ activo } = {}) {
     const where = {};
     if (activo !== undefined) where.activo = activo;
@@ -35,18 +36,19 @@ class CategoriaRepository {
     return categoria.update(cambios);
   }
 
-  // Soft delete: nunca se borra el registro, porque los servicios de
-  // |es/solicitudes pueden referenciar la categoría por id.
+  // Soft delete: sirve para ocultar un registro de la base de datos sin eliminarlo físicamente.
   async softDelete(categoria) {
     return categoria.update({ activo: false });
   }
+  /*
+  Alternativa de borrado físico -- NO usar mientras existan tablas
+  que referencien categoriaId (rompería la integridad referencial o
+  borraría en cascada servicios que aún son válidos):
 
-  // Alternativa de borrado físico -- NO usar mientras existan tablas
-  // que referencien categoriaId (rompería la integridad referencial o
-  // borraría en cascada servicios que aún son válidos):
-  // async hardDelete(categoria) {
-  //   return categoria.destroy();
-  // }
+  async hardDelete(categoria) {
+    return categoria.destroy();
+  }
+  */
 }
 
 module.exports = new CategoriaRepository();

@@ -2,11 +2,13 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 
 // -----------------------------------------------------------------------
-// CONTEXTO PARA EL ESTUDIANTE:
-// Catálogo de categorías de servicios (plomería, electricidad, etc.).
-// Los servicios que publiquen los proveedores van a referenciar una
-// categoría por su id -- por eso "eliminar" nunca es un borrado físico,
-// solo se desactiva (ver categoria.repository.js).
+// CONTEXTO:
+// Catálogo de categorías de productos de la papelería LNE Stock
+// (cuadernos, útiles escolares, artículos de oficina, etc.).
+// Los productos registrados en el inventario pueden referenciar una
+// categoría por su id. Por eso, "eliminar" una categoría no implica
+// borrarla físicamente: se desactiva para conservar el historial y
+// evitar problemas con los productos que ya la utilizan.
 // -----------------------------------------------------------------------
 class Categoria extends Model {}
 

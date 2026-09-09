@@ -2,10 +2,13 @@ const categoriaRepository = require('../repositories/categoria.repository');
 
 // -----------------------------------------------------------------------
 // CONTEXTO PARA EL ESTUDIANTE:
-// Lógica de negocio de Categorías. No conoce req/res, igual que
-// auth.service.js -- los errores de dominio se lanzan con
-// `error.statusCode` y el Controller/errorHandler deciden cómo
-// traducirlos a HTTP.
+// Lógica de negocio de las categorías de productos de LNE Stock,
+// la aplicación de inventario de la papelería. Este servicio valida
+// reglas como nombres únicos y coordina la desactivación de categorías
+// sin borrar el historial de los productos que las utilizan.
+// No conoce req/res, igual que auth.service.js: los errores de dominio
+// se lanzan con `error.statusCode` y el Controller/errorHandler decide
+// cómo traducirlos a HTTP.
 // -----------------------------------------------------------------------
 class CategoriaService {
   async listar({ activo } = {}) {
@@ -62,16 +65,15 @@ class CategoriaService {
     }
   }
 
-  // Soft delete: ver categoria.repository.js -- nunca se borra el
-  // registro para no romper servicios que referencien la categoría.
   async eliminar(id) {
     const categoria = await this.obtenerPorId(id);
     return categoriaRepository.softDelete(categoria);
   }
 
   // Traduce errores de validación/unicidad de Sequelize a errores de
-  // dominio con statusCode 400, con el mismo formato que usa el resto
-  // de la app (ver errorHandler.js).
+  // dominio con statusCode 400, usando el mismo formato que el resto
+  // de LNE Stock (ver errorHandler.js).
+  
   _traducirErrorSequelize(err) {
     if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
       const mensaje = err.errors?.[0]?.message || 'Datos de categoría inválidos';

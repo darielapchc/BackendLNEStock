@@ -13,7 +13,7 @@ const { hashPassword } = require('../utils/password');
 const { seedCategorias } = require('./categoria.seeder');
 
 // -----------------------------------------------------------------------
-// CONTEXTO PARA EL ESTUDIANTE:
+// CONTEXTO:
 // Este es el SEEDER MAESTRO: orquesta todo lo necesario para poder
 // probar el login, los endpoints y el home de la app Flutter de punta a
 // punta con un solo comando. Respeta el mismo mecanismo de hasheo que
