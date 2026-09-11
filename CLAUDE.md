@@ -30,7 +30,7 @@ No test suite, linter, or build step is configured yet (no test framework, no es
 
 ```bash
 curl -X POST http://localhost:4000/api/auth/register -H "Content-Type: application/json" \
-  -d '{"fullName":"Ana Torres","email":"ana@example.com","password":"password123","role":"client"}'
+  -d '{"fullName":"Ana Torres","email":"ana@example.com","password":"password123","role":"staff"}'
 
 curl -X POST http://localhost:4000/api/auth/login -H "Content-Type: application/json" \
   -c cookies.txt -d '{"email":"ana@example.com","password":"password123"}'
@@ -68,5 +68,5 @@ Skipping a layer (e.g. calling Sequelize directly from a Controller) is consider
 - Refresh token: 7 day expiry, persisted in the `refresh_tokens` table (via `RefreshToken` model/repository) so it can be revoked; delivered as an `httpOnly` + `secure` (prod only) + `sameSite=strict` cookie scoped to `path: '/api/auth'`, never in `localStorage`.
 - Refresh rotation: every `/api/auth/refresh` call revokes the presented refresh token and issues a new one (limits damage from a stolen token to one use).
 - Login returns a generic "credenciales inválidas" error for both "user not found" and "wrong password" to avoid user-enumeration.
-- El rol aceptado durante el registro está restringido a `client`; `admin` nunca se autoasigna mediante la API pública.
+- El rol aceptado durante el registro está restringido a `staff`; `admin` nunca se autoasigna mediante la API pública.
 - `AuthService.logoutAllDevices(userId)` exists (revokes every refresh token for a user) but is not yet wired to a route — see README's student exercise for the intended `POST /api/auth/logout-all` endpoint.

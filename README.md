@@ -64,7 +64,7 @@ Si todo salió bien, deberías ver en consola:
 ```bash
 curl -X POST http://localhost:4000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"fullName":"Ana Torres","email":"ana@example.com","password":"password123","role":"client"}'
+  -d '{"fullName":"Ana Torres","email":"ana@example.com","password":"password123","role":"staff"}'
 ```
 
 **Login:**
@@ -132,6 +132,8 @@ Sobre este mismo módulo, implementar:
 Primero registra o inicia sesión con el usuario administrador sembrado (`admin@lnestock.hn`, contraseña `LNEStock123`) y envía su `accessToken` en el encabezado `Authorization: Bearer <token>`.
 
 Ejecuta `npm run seed` para crear las seis categorías y los usuarios de prueba. El seeder es idempotente; `npm run seed:reset` borra los datos de desarrollo de movimientos, productos, usuarios, refresh tokens y categorías antes de sembrarlos otra vez.
+
+Si la tabla `users` ya existía con el rol histórico `client`, ejecuta manualmente `npm run migrate:roles -- --confirm` desde desarrollo. El script convierte esos usuarios a `staff` y modifica el `ENUM` para dejar únicamente `admin` y `staff`; no elimina usuarios ni otras tablas. No se ejecuta al iniciar el servidor.
 
 | Método | Endpoint | Acceso |
 | --- | --- | --- |

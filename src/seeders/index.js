@@ -46,11 +46,11 @@ const USUARIOS_BASE = [
   },
 
   { 
-    fullName: 'Lia Jael', email: 'liajael@gmail.com', role: 'client' 
+    fullName: 'Lia Jael', email: 'liajael@gmail.com', role: 'staff' 
   },
 
   {
-    fullName: 'Isis Pacheco', email: 'isispacheco@gmail.com', role: 'client' 
+    fullName: 'Isis Pacheco', email: 'isispacheco@gmail.com', role: 'staff' 
   },
 
 ];

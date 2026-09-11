@@ -29,7 +29,7 @@ router.post(
       .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres')
       .matches(/\d/).withMessage('La contraseña debe incluir al menos un número'),
     body('role')
-      .isIn(['client']).withMessage('Rol inválido'),
+      .isIn(['staff']).withMessage('Rol inválido'),
     // OJO: "admin" NUNCA es un valor permitido aquí -- nadie se
     // auto-asigna admin desde un formulario público. Eso se hace
     // manualmente en BD o desde un panel interno protegido.
