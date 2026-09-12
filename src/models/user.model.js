@@ -27,9 +27,9 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('client', 'provider', 'admin'),
+      type: DataTypes.ENUM('admin', 'staff'),
       allowNull: false,
-      defaultValue: 'client',
+      defaultValue: 'staff',
     },
     isEmailVerified: {
       type: DataTypes.BOOLEAN,

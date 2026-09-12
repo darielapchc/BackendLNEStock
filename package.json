@@ -1,25 +1,31 @@
 {
-  "name": "backendlnestock",
+  "name": "lne-stock-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API REST para la gestión de inventario de LNE Stock",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "seed:categorias": "node src/seeders/categoria.seeder.js",
+    "seed": "node src/seeders/index.js",
+    "seed:reset": "node src/seeders/index.js --reset",
+    "migrate:roles": "node scripts/migrate-roles.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/darielapchc/BackendLNEStock.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/darielapchc/BackendLNEStock/issues"
-  },
-  "homepage": "https://github.com/darielapchc/BackendLNEStock#readme",
   "dependencies": {
-    "express": "^5.2.1",
-    "sequelize": "^6.37.8"
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
