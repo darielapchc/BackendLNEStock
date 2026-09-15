@@ -3,6 +3,7 @@ const authRoutes = require('./auth.routes');
 const categoriaRoutes = require('./categoria.routes');
 const productoRoutes = require('./producto.routes');
 const movimientoInventarioRoutes = require('./movimientoInventario.routes');
+const favoritoRoutes = require('./favorito.routes');
 
 
 const router = Router();
@@ -15,5 +16,6 @@ router.use('/auth', authRoutes);
 router.use('/categorias', categoriaRoutes);
 router.use('/productos', productoRoutes);
 router.use('/movimientos', movimientoInventarioRoutes);
+router.use('/favoritos', favoritoRoutes);
 
 module.exports = router;

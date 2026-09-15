@@ -5,6 +5,7 @@ const User = require('../models/user.model');
 const Categoria = require('../models/categoria.model');
 const Producto = require('../models/producto.model');
 const MovimientoInventario = require('../models/movimientoInventario.model');
+const Favorito = require('../models/favorito.model');
 
 // RefreshToken no se siembra, pero su modelo debe registrarse para que
 // Sequelize conozca la asociación User.hasMany(RefreshToken) al hacer sync() -- si no, la tabla refresh_tokens nunca se crea.
@@ -68,6 +69,8 @@ const TODOS_LOS_EMAILS = [
 // -----------------------------------------------------------------------
 
 async function reset() {
+  await Favorito.destroy({ where: {} });
+
   await MovimientoInventario.destroy({ where: {} });
 
   await Producto.destroy({ where: {} });

@@ -88,8 +88,11 @@ class ProductoService {
   }
 
   _traducirErrorSequelize(err, mensajePorDefecto) {
-    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+    if (err.name === 'SequelizeValidationError') {
       return this._error(err.errors?.[0]?.message || mensajePorDefecto, 400);
+    }
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      return this._error(err.errors?.[0]?.message || 'Ya existe un producto con esos datos', 409);
     }
     return err;
   }

@@ -80,6 +80,12 @@ class AuthService {
     }
 
     const user = await userRepository.findById(payload.sub);
+    if (!user) {
+      await refreshTokenRepository.revokeToken(oldRefreshToken);
+      const error = new Error('La sesion ya no pertenece a un usuario activo');
+      error.statusCode = 401;
+      throw error;
+    }
 
     // 3. Rotación: revocamos el refreshToken usado y emitimos uno nuevo.
     // Esto limita el daño si un refreshToken es robado: solo sirve UNA vez.
@@ -94,6 +100,44 @@ class AuthService {
 
   async logoutAllDevices(userId) {
     await refreshTokenRepository.revokeAllForUser(userId);
+  }
+
+  async obtenerPerfil(userId) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      const error = new Error('Usuario no encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
+    return this._perfilPublico(user);
+  }
+
+  async actualizarPerfil(userId, { fullName, email }) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      const error = new Error('Usuario no encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const duplicate = await userRepository.findByEmailExcluyendoId(email, userId);
+    if (duplicate) {
+      const error = new Error('El correo ya esta registrado');
+      error.statusCode = 409;
+      throw error;
+    }
+
+    try {
+      await userRepository.update(user, { fullName, email });
+      return this._perfilPublico(user);
+    } catch (err) {
+      if (err.name === 'SequelizeUniqueConstraintError') {
+        const error = new Error('El correo ya esta registrado');
+        error.statusCode = 409;
+        throw error;
+      }
+      throw err;
+    }
   }
 
   // Método privado (por convención de nombre) reutilizado por
@@ -118,6 +162,15 @@ class AuthService {
         email: user.email,
         role: user.role,
       },
+    };
+  }
+
+  _perfilPublico(user) {
+    return {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
     };
   }
 }

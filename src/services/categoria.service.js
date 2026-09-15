@@ -75,10 +75,15 @@ class CategoriaService {
   // de LNE Stock (ver errorHandler.js).
   
   _traducirErrorSequelize(err) {
-    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+    if (err.name === 'SequelizeValidationError') {
       const mensaje = err.errors?.[0]?.message || 'Datos de categoría inválidos';
       const error = new Error(mensaje);
       error.statusCode = 400;
+      return error;
+    }
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      const error = new Error('Ya existe una categoria con esos datos');
+      error.statusCode = 409;
       return error;
     }
     return err;

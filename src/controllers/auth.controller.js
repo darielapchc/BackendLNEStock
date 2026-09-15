@@ -84,6 +84,26 @@ class AuthController {
       next(err);
     }
   }
+
+  async obtenerPerfil(req, res, next) {
+    try {
+      const user = await authService.obtenerPerfil(req.user.id);
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async actualizarPerfil(req, res, next) {
+    try {
+      // The service receives a strict whitelist of mutable profile fields.
+      const { fullName, email } = req.body;
+      const user = await authService.actualizarPerfil(req.user.id, { fullName, email });
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new AuthController();

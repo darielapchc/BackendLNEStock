@@ -9,7 +9,8 @@
     "seed:categorias": "node src/seeders/categoria.seeder.js",
     "seed": "node src/seeders/index.js",
     "seed:reset": "node src/seeders/index.js --reset",
-    "migrate:roles": "node scripts/migrate-roles.js"
+    "migrate:roles": "node scripts/migrate-roles.js",
+    "migrate:favoritos": "node scripts/migrate-favoritos.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
