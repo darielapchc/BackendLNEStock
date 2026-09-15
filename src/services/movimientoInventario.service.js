@@ -26,7 +26,7 @@ class MovimientoInventarioService {
         async (transaction) => {
           const producto = await productoRepository.findById(productoId, {
             transaction,
-            lock: transaction.LOCK.UPDATE,
+            lock: true,
           });
 
           if (!producto) throw this._error('Producto no encontrado', 404);

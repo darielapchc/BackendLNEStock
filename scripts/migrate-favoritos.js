@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const sequelize = require('../src/config/database');
-const Favorito = require('../src/models/favorito.model');
+const { DataTypes } = require('sequelize');
 
 const CONFIRM = process.argv.includes('--confirm');
 
@@ -15,10 +15,46 @@ async function migrateFavoritos() {
 
   try {
     await sequelize.authenticate();
-    // sync() sobre este unico modelo emite CREATE TABLE IF NOT EXISTS. No usa
-    // alter ni force, por lo que no modifica ni elimina tablas existentes.
-    await Favorito.sync();
-    console.log('Tabla favoritos verificada/creada correctamente.');
+
+    const queryInterface = sequelize.getQueryInterface();
+    const tablas = await queryInterface.showAllTables();
+    const tablaFavoritosExiste = tablas.some(
+      (tabla) => String(tabla).toLowerCase() === 'favoritos'
+    );
+
+    if (!tablaFavoritosExiste) {
+      await queryInterface.createTable('favoritos', {
+        id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+        userId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: { model: 'users', key: 'id' },
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+        },
+        productoId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: { model: 'productos', key: 'id' },
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+        },
+        createdAt: { type: DataTypes.DATE, allowNull: false },
+        updatedAt: { type: DataTypes.DATE, allowNull: false },
+      }, {
+        indexes: [
+          {
+            name: 'favoritos_user_producto_unique',
+            unique: true,
+            fields: ['userId', 'productoId'],
+          },
+        ],
+      });
+      console.log('Tabla favoritos creada correctamente.');
+    } else {
+      console.log('La tabla favoritos ya existe; no se realizaron cambios.');
+    }
+
     await sequelize.close();
   } catch (error) {
     console.error('No se pudo preparar la tabla favoritos:', error.message);
