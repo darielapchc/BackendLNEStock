@@ -53,6 +53,8 @@ class AuthService {
 
     if (!user) throw invalidCredentialsError();
 
+    if (!user.isActive) throw invalidCredentialsError();
+
     const isValidPassword = await comparePassword(password, user.passwordHash);
     if (!isValidPassword) throw invalidCredentialsError();
 
@@ -81,6 +83,13 @@ class AuthService {
 
     const user = await userRepository.findById(payload.sub);
     if (!user) {
+      await refreshTokenRepository.revokeToken(oldRefreshToken);
+      const error = new Error('La sesion ya no pertenece a un usuario activo');
+      error.statusCode = 401;
+      throw error;
+    }
+
+    if (!user.isActive) {
       await refreshTokenRepository.revokeToken(oldRefreshToken);
       const error = new Error('La sesion ya no pertenece a un usuario activo');
       error.statusCode = 401;

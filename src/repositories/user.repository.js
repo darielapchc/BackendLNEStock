@@ -10,12 +10,36 @@ const { Op } = require('sequelize');
 // Esto es el patrón Repository + el principio de Inversión de Dependencias (SOLID).
 // -----------------------------------------------------------------------
 class UserRepository {
+  static get safeAttributes() {
+    return [
+      'id',
+      'fullName',
+      'email',
+      'role',
+      'isEmailVerified',
+      'isActive',
+      'createdAt',
+      'updatedAt',
+    ];
+  }
+
   async findByEmail(email) {
     return User.findOne({ where: { email } });
   }
 
   async findById(id) {
     return User.findByPk(id);
+  }
+
+  async findAllSafe() {
+    return User.findAll({
+      attributes: UserRepository.safeAttributes,
+      order: [['id', 'ASC']],
+    });
+  }
+
+  async findSafeById(id) {
+    return User.findByPk(id, { attributes: UserRepository.safeAttributes });
   }
 
   async findByEmailExcluyendoId(email, id) {
@@ -28,6 +52,14 @@ class UserRepository {
 
   async update(user, cambios) {
     return user.update(cambios);
+  }
+
+  async updateStatus(user, isActive) {
+    return user.update({ isActive });
+  }
+
+  async updatePassword(user, passwordHash) {
+    return user.update({ passwordHash });
   }
 }
 

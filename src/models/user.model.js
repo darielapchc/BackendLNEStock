@@ -35,6 +35,11 @@ User.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
   },
   {
     sequelize,
