@@ -10,6 +10,7 @@ require('./models/refreshToken.model');
 require('./models/categoria.model');
 require('./models/producto.model');
 require('./models/movimientoInventario.model');
+require('./models/favorito.model');
 
 const PORT = process.env.PORT || 4000;
 

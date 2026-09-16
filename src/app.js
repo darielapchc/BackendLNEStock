@@ -28,7 +28,26 @@ app.use(
 // Configuración de CORS.
 // Durante el desarrollo permitimos que Flutter y otras herramientas
 // de prueba consuman la API.
-app.use(cors());
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Native Flutter clients and Postman do not send Origin.
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      const error = new Error('Origen no permitido por CORS');
+      error.statusCode = 403;
+      return callback(error);
+    },
+    credentials: true,
+  })
+);
 
 // Middleware para interpretar datos JSON enviados a la API.
 app.use(express.json());

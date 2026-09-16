@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const { Op } = require('sequelize');
 
 // -----------------------------------------------------------------------
 // CONTEXTO PARA EL ESTUDIANTE:
@@ -17,8 +18,16 @@ class UserRepository {
     return User.findByPk(id);
   }
 
+  async findByEmailExcluyendoId(email, id) {
+    return User.findOne({ where: { email, id: { [Op.ne]: id } } });
+  }
+
   async create({ fullName, email, passwordHash, role }) {
     return User.create({ fullName, email, passwordHash, role });
+  }
+
+  async update(user, cambios) {
+    return user.update(cambios);
   }
 }
 

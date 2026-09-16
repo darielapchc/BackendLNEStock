@@ -3,7 +3,6 @@ const { body } = require('express-validator');
 const authController = require('../controllers/auth.controller');
 const handleValidationErrors = require('../middlewares/validate');
 const { authenticate } = require('../middlewares/authenticate');
-const authService = require('../services/auth.service');
 
 const router = Router();
 
@@ -55,21 +54,23 @@ router.post('/logout', authController.logout);
 // Ruta de ejemplo protegida, para probar el middleware `authenticate`
 // en esta misma sesión (el estudiante debe poder verificar que el
 // flujo completo funciona de punta a punta).
-router.get('/me', authenticate, async (req, res, next) => {
-  try {
-    const userRepository = require('../repositories/user.repository');
-    const user = await userRepository.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+router.get('/me', authenticate, authController.obtenerPerfil);
 
-    res.json({
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+router.put(
+  '/me',
+  authenticate,
+  [
+    body('fullName')
+      .trim()
+      .notEmpty().withMessage('El nombre completo es obligatorio')
+      .isLength({ min: 3, max: 150 }).withMessage('El nombre debe tener entre 3 y 150 caracteres'),
+    body('email')
+      .trim()
+      .isEmail().withMessage('Debe ser un correo valido')
+      .normalizeEmail(),
+  ],
+  handleValidationErrors,
+  authController.actualizarPerfil
+);
 
 module.exports = router;
